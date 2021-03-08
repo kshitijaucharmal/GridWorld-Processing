@@ -1,26 +1,36 @@
 
+// game environment
 Game env;
-int Episodes = 10000;
-int episode = 0;
 
+// paramters to tweak
+//---------------------------------------------------------------
+int Episodes = 10000; //total episodes to train 
+int episode = 0; // start from episode
+int rows = 10; // rows in the grid (grid is square)
+boolean show_numbers = true; // show numbers in grid (turn this off for bigger_grids)
+boolean heuristic = false; // want to play/test yourself??
+
+// q-learning hyperparamters
 float epsilon = 0.6f;
 float alpha = 0.6f;
 float gamma = 0.9f;
 
+// Q learning variables
 int Action;
 int State;
 boolean Done;
 float Rew;
 
+// THE Q Table
 float[][] Q;
-int cycles = 1000;
-int treps = 1;
+int cycles = 1000; // This is the speed of the training dont raise too high if on a low end pc
+int treps = 1; // training episode start
 
 void setup(){
-  size(600, 600);
-  frameRate(120);
+  size(600, 600); // dont change this (size of canvas)
+  frameRate(120); // frame rate
   
-  env = new Game(30);
+  env = new Game(rows);
   
   Q = new float[env.rows * env.cols][4];
   for(int i = 0; i < Q.length; i++){
@@ -36,8 +46,10 @@ void setup(){
 
 void draw(){
   background(51);
-  for(int i = 0; i < cycles; i++){
-    Q_algo();
+  if(!heuristic){
+    for(int i = 0; i < cycles; i++){
+      Q_algo();
+    }
   }
   
   env.render();
@@ -85,17 +97,19 @@ int argmax(float[] arr){
   return arg;
 }
 
-//void keyPressed(){
-//  if(key == 'w'){
-//    println(env.step(1).done);
-//  }
-//  if(key == 'a'){
-//    println(env.step(2).done);
-//  }
-//  if(key == 's'){
-//    println(env.step(0).done);
-//  }
-//  if(key == 'd'){
-//    println(env.step(3).done);
-//  }
-//}
+void keyPressed(){
+  if(heuristic){
+    if(key == 'w'){
+      if(env.step(1).done) env.reset();
+    }
+    if(key == 'a'){
+      if(env.step(2).done) env.reset();
+    }
+    if(key == 's'){
+      if(env.step(0).done) env.reset();
+    }
+    if(key == 'd'){
+      if(env.step(3).done) env.reset();
+    }
+  }
+}

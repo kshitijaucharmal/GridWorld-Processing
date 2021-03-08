@@ -30,7 +30,8 @@ class Game{
     textAlign(CENTER, CENTER);
     for(int i = 0; i < rows; i++){
       for(int j = 0; j < cols; j++){
-        //text(i*cols + j, i*size + offset, j * size + offset);
+        if(show_numbers)
+          text(i*cols + j, i*size + offset, j * size + offset);
         if(i * cols + j == state){
           push();
           fill(0, 0, 255);
