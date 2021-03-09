@@ -2,7 +2,8 @@ class Game{
   int rows, cols;
   int size;
   int offset;
-  int[] danger_states = {5, 34, 52, 62, 75, 32, 10};
+  ArrayList<Integer> danger_states = new ArrayList<Integer>();
+  ArrayList<Integer> encourage_states = new ArrayList<Integer>();
   
   int state;
   float reward = 0f;
@@ -45,10 +46,18 @@ class Game{
           pop();
         }
         
-        for(int k = 0; k < danger_states.length; k++){
-          if(i * cols + j == danger_states[k]){
+        for(int k = 0; k < danger_states.size(); k++){
+          if(i * cols + j == danger_states.get(k)){
             push();
             fill(255, 0, 0, 100);
+            rect(i * size, j * size, size, size);
+            pop();
+          }
+        }
+        for(int k = 0; k < encourage_states.size(); k++){
+          if(i * cols + j == encourage_states.get(k)){
+            push();
+            fill(0, 0, 255, 100);
             rect(i * size, j * size, size, size);
             pop();
           }
@@ -77,10 +86,15 @@ class Game{
       r = 100;
       done = true;
     }
-    for(int i = 0;i < danger_states.length; i++){
-      if(state == danger_states[i]){
+    for(int i = 0;i < danger_states.size(); i++){
+      if(state == danger_states.get(i)){
         r = -10f;
         done = true;
+      }
+    }
+    for(int i = 0;i < encourage_states.size(); i++){
+      if(state == encourage_states.get(i)){
+        r = 0f;
       }
     }
     return r;
