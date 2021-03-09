@@ -4,7 +4,7 @@ Game env;
 
 // paramters to tweak
 //---------------------------------------------------------------
-int Episodes = 10000; //total episodes to train 
+int Episodes = 1000; //total episodes to train 
 int episode = 0; // start from episode
 int rows = 10; // rows in the grid (grid is square)
 boolean show_numbers = true; // show numbers in grid (turn this off for bigger_grids)
@@ -23,12 +23,17 @@ float Rew;
 
 // THE Q Table
 float[][] Q;
-int cycles = 1000; // This is the speed of the training dont raise too high if on a low end pc
+int cycles = 1; // This is the speed of the training dont raise too high if on a low end pc
 int treps = 1; // training episode start
+boolean speedup = false;
+boolean start = false;
 
 void setup(){
   size(600, 600); // dont change this (size of canvas)
-  frameRate(120); // frame rate
+  if(speedup)
+    frameRate(120); // frame rate
+  else
+    frameRate(10);
   
   env = new Game(rows);
   
@@ -46,13 +51,23 @@ void setup(){
 
 void draw(){
   background(51);
-  if(!heuristic){
-    for(int i = 0; i < cycles; i++){
-      Q_algo();
+  if(start){
+    if(!heuristic){
+      for(int i = 0; i < cycles; i++){
+        Q_algo();
+      }
     }
+    
+    if(speedup)frameRate(120);
+    else frameRate(10);
+    
+    env.render();
   }
-  
-  env.render();
+  else{
+    textSize(32);
+    textAlign(CENTER, CENTER);
+    text("Press Space to start", width/2, height/2);
+  }
 }
 
 void Q_algo(){
@@ -111,5 +126,11 @@ void keyPressed(){
     if(key == 'd'){
       if(env.step(3).done) env.reset();
     }
+  }
+  if(key == 'p'){
+    speedup = !speedup;
+  }
+  if(key == ' '){
+    start = !start;
   }
 }
