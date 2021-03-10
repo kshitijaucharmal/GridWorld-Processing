@@ -5,11 +5,11 @@ Game env;
 
 // paramters to tweak
 //---------------------------------------------------------------
-int Episodes = 1000; //total episodes to train 
+int Episodes = 3000; //total episodes to train 
 int episode = 0; // start from episode
 int rows = 15; // rows in the grid (grid is square)
 boolean show_numbers = false; // show numbers in grid (turn this off for bigger_grids)
-boolean heuristic = true; // want to play/test yourself??
+boolean heuristic = false; // want to play/test yourself??
 
 // q-learning hyperparamters
 float epsilon = 0.6f;
@@ -174,6 +174,31 @@ int exist_in_encourage(int state){
   return -1;
 }
 
+void save_lists(){
+  String[] ds = cvt_to_array(env.danger_states);
+  saveStrings("danger_list.txt", ds);
+}
+
+void load_lists(){
+  env.danger_states = cvt_from_array(loadStrings("danger_list.txt"));
+}
+
+String[] cvt_to_array(ArrayList<Integer> arr){
+  String[] a = new String[arr.size()];
+  for(int i = 0; i < arr.size(); i++){
+    a[i] = str(arr.get(i));
+  }
+  return a;
+}
+
+ArrayList<Integer> cvt_from_array(String[] arr){
+  ArrayList<Integer> a = new ArrayList<Integer>();
+  for(int i = 0; i < arr.length; i++){
+    a.add(Integer.parseInt(String.valueOf(arr[i])));
+  }
+  return a;
+}
+
 void keyPressed() {
   if (heuristic) {
     if (key == 'w') {
@@ -197,5 +222,13 @@ void keyPressed() {
   }
   if (key == 'e') {
     encourage_mode = !encourage_mode;
+  }
+  if (key == 'S'){
+    save_lists();
+    print("Saved");
+  }
+  if(key == 'L'){
+    load_lists();
+    print("Loaded");
   }
 }
