@@ -117,7 +117,7 @@ int argmax(float[] arr) {
   return arg;
 }
 
-void mouseClicked() {
+void mousePressed() {
   if (!start) {
     if(!encourage_mode){
       for (int i = 0; i < rows; i++) {
