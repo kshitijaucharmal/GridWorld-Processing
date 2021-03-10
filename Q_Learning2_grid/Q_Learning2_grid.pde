@@ -7,9 +7,9 @@ Game env;
 //---------------------------------------------------------------
 int Episodes = 1000; //total episodes to train 
 int episode = 0; // start from episode
-int rows = 10; // rows in the grid (grid is square)
-boolean show_numbers = true; // show numbers in grid (turn this off for bigger_grids)
-boolean heuristic = false; // want to play/test yourself??
+int rows = 15; // rows in the grid (grid is square)
+boolean show_numbers = false; // show numbers in grid (turn this off for bigger_grids)
+boolean heuristic = true; // want to play/test yourself??
 
 // q-learning hyperparamters
 float epsilon = 0.6f;
@@ -71,6 +71,8 @@ void draw() {
     textSize(32);
     textAlign(CENTER, CENTER);
     text("Press Space to start", width/2, height/2);
+    if(encourage_mode) text("Mode : Encourage", width/2, 40);
+    else text("Mode : Danger", width/2, 40);
   }
   env.render();
 }
@@ -124,8 +126,11 @@ void mouseClicked() {
             push();
             fill(255, 10, 10);
             rect(i * env.size, j * env.size, env.size, env.size);
-            if(!exist_in_danger(i*rows+j))
+            int s = exist_in_danger(i*rows+j);
+            if(s < 0)
               env.danger_states.add(i*rows + j);
+            else if(mouseButton == RIGHT)
+              env.danger_states.remove(env.danger_states.get(s));
             pop();
           }
         }
@@ -136,10 +141,13 @@ void mouseClicked() {
         for (int j = 0; j < rows; j++) {
           if (mouseX >= i * env.size && mouseX <= (i+1) * env.size && mouseY >= j * env.size && mouseY <= (j+1) * env.size) {
             push();
-            fill(255, 10, 10);
+            fill(10, 10, 255);
             rect(i * env.size, j * env.size, env.size, env.size);
-            if(!exist_in_encourage(i*rows+j))
+            int s = exist_in_encourage(i*rows+j);
+            if(s < 0)
               env.encourage_states.add(i*rows + j);
+            else if(mouseButton == RIGHT)
+              env.encourage_states.remove(env.encourage_states.get(s));
             pop();
           }
         }
@@ -148,22 +156,22 @@ void mouseClicked() {
   }
 }
 
-boolean exist_in_danger(int state){
+int exist_in_danger(int state){
   for(int i = 0; i < env.danger_states.size();i++){
     if(env.danger_states.get(i) == state){
-      return true;
+      return i;
     }
   }
-  return false;
+  return -1;
 }
 
-boolean exist_in_encourage(int state){
+int exist_in_encourage(int state){
   for(int i = 0; i < env.encourage_states.size();i++){
     if(env.encourage_states.get(i) == state){
-      return true;
+      return i;
     }
   }
-  return false;
+  return -1;
 }
 
 void keyPressed() {
