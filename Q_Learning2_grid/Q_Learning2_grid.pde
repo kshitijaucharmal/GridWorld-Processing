@@ -31,7 +31,7 @@ boolean start = false; // start and pause with space (pause to edit danger_state
 boolean encourage_mode = false;
 
 void setup() {
-  size(600, 600); // dont change this (size of canvas)
+  size(600, 700); // dont change this (size of canvas)
   if (speedup)
     frameRate(120); // frame rate
   else
@@ -96,7 +96,7 @@ void Q_algo() {
     Rew = 0;
     if (episode >= Episodes) {
       epsilon = 1;
-      cycles = 1;
+      //cycles = 1;
       frameRate(10);
       println("Testing Episode : " + treps);
       treps++;
@@ -222,6 +222,11 @@ void keyPressed() {
   }
   if (key == 'e') {
     encourage_mode = !encourage_mode;
+  }
+  if (key == 'c') {
+    if(cycles == 1000) cycles = 1;
+    else cycles = 1000;
+    println("Cycles : " + cycles);
   }
   if (key == 'S'){
     save_lists();

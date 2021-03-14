@@ -12,7 +12,7 @@ class Game{
   Game(int r){
     this.rows = r;
     this.cols = r;
-    size = width/rows;
+    size = 600/rows;
     offset = size/2;
     
     state = 0;
@@ -65,11 +65,11 @@ class Game{
       }
     }
     stroke(255);
-    for(int i = 0; i < rows; i++){
-      line(0, i * size, width, i * size);
+    for(int i = 0; i < rows+1; i++){
+      line(0, i * size, 600, i * size);
     }
     for(int i = 0; i < cols; i++){
-      line(i * size, 0, i * size, height);
+      line(i * size, 0, i * size, 600);
     }
     pop();
   }
