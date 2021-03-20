@@ -21,17 +21,18 @@ int Action;
 int State;
 boolean Done;
 float Rew;
+boolean recording = false;
 
 // THE Q Table
 float[][] Q;
-int cycles = 1000; // This is the speed of the training dont raise too high if on a low end pc
+int cycles = 1; // This is the speed of the training dont raise too high if on a low end pc
 int treps = 1; // training episode start
 boolean speedup = false; // press p to speed up (see keyPressed function)
 boolean start = false; // start and pause with space (pause to edit danger_states)
 boolean encourage_mode = false;
 
 void setup() {
-  size(600, 700); // dont change this (size of canvas)
+  size(600, 600); // dont change this (size of canvas)
   if (speedup)
     frameRate(120); // frame rate
   else
@@ -64,17 +65,32 @@ void draw() {
     else frameRate(10);
 
     //env.render();
+    push();
     textSize(20);
     textAlign(CENTER, CENTER);
     text("Episode : " + episode, width/2, height/2);
+    pop();
   } else {
+    push();
     textSize(32);
     textAlign(CENTER, CENTER);
     text("Press Space to start", width/2, height/2);
-    if(encourage_mode) text("Mode : Encourage", width/2, 40);
+    if (encourage_mode) text("Mode : Encourage", width/2, 40);
     else text("Mode : Danger", width/2, 40);
+    pop();
   }
   env.render();
+  push();
+  if (recording) {
+    saveFrame("gridImg_####.png");
+    fill(255, 0, 0);
+  }
+  else{
+    fill(0,255, 0);
+  }
+  
+  circle(50, height-50, 10);
+  pop();
 }
 
 void Q_algo() {
@@ -119,7 +135,7 @@ int argmax(float[] arr) {
 
 void mousePressed() {
   if (!start) {
-    if(!encourage_mode){
+    if (!encourage_mode) {
       for (int i = 0; i < rows; i++) {
         for (int j = 0; j < rows; j++) {
           if (mouseX >= i * env.size && mouseX <= (i+1) * env.size && mouseY >= j * env.size && mouseY <= (j+1) * env.size) {
@@ -127,16 +143,15 @@ void mousePressed() {
             fill(255, 10, 10);
             rect(i * env.size, j * env.size, env.size, env.size);
             int s = exist_in_danger(i*rows+j);
-            if(s < 0)
+            if (s < 0)
               env.danger_states.add(i*rows + j);
-            else if(mouseButton == RIGHT)
+            else if (mouseButton == RIGHT)
               env.danger_states.remove(env.danger_states.get(s));
             pop();
           }
         }
       }
-    }
-    else{
+    } else {
       for (int i = 0; i < rows; i++) {
         for (int j = 0; j < rows; j++) {
           if (mouseX >= i * env.size && mouseX <= (i+1) * env.size && mouseY >= j * env.size && mouseY <= (j+1) * env.size) {
@@ -144,9 +159,9 @@ void mousePressed() {
             fill(10, 10, 255);
             rect(i * env.size, j * env.size, env.size, env.size);
             int s = exist_in_encourage(i*rows+j);
-            if(s < 0)
+            if (s < 0)
               env.encourage_states.add(i*rows + j);
-            else if(mouseButton == RIGHT)
+            else if (mouseButton == RIGHT)
               env.encourage_states.remove(env.encourage_states.get(s));
             pop();
           }
@@ -156,44 +171,44 @@ void mousePressed() {
   }
 }
 
-int exist_in_danger(int state){
-  for(int i = 0; i < env.danger_states.size();i++){
-    if(env.danger_states.get(i) == state){
+int exist_in_danger(int state) {
+  for (int i = 0; i < env.danger_states.size(); i++) {
+    if (env.danger_states.get(i) == state) {
       return i;
     }
   }
   return -1;
 }
 
-int exist_in_encourage(int state){
-  for(int i = 0; i < env.encourage_states.size();i++){
-    if(env.encourage_states.get(i) == state){
+int exist_in_encourage(int state) {
+  for (int i = 0; i < env.encourage_states.size(); i++) {
+    if (env.encourage_states.get(i) == state) {
       return i;
     }
   }
   return -1;
 }
 
-void save_lists(){
+void save_lists() {
   String[] ds = cvt_to_array(env.danger_states);
   saveStrings("danger_list.txt", ds);
 }
 
-void load_lists(){
+void load_lists() {
   env.danger_states = cvt_from_array(loadStrings("danger_list.txt"));
 }
 
-String[] cvt_to_array(ArrayList<Integer> arr){
+String[] cvt_to_array(ArrayList<Integer> arr) {
   String[] a = new String[arr.size()];
-  for(int i = 0; i < arr.size(); i++){
+  for (int i = 0; i < arr.size(); i++) {
     a[i] = str(arr.get(i));
   }
   return a;
 }
 
-ArrayList<Integer> cvt_from_array(String[] arr){
+ArrayList<Integer> cvt_from_array(String[] arr) {
   ArrayList<Integer> a = new ArrayList<Integer>();
-  for(int i = 0; i < arr.length; i++){
+  for (int i = 0; i < arr.length; i++) {
     a.add(Integer.parseInt(String.valueOf(arr[i])));
   }
   return a;
@@ -214,6 +229,9 @@ void keyPressed() {
       if (env.step(3).done) env.reset();
     }
   }
+  if (key == 'r') {
+    recording = !recording;
+  }
   if (key == 'p') {
     speedup = !speedup;
   }
@@ -224,15 +242,15 @@ void keyPressed() {
     encourage_mode = !encourage_mode;
   }
   if (key == 'c') {
-    if(cycles == 1000) cycles = 1;
+    if (cycles == 1000) cycles = 1;
     else cycles = 1000;
     println("Cycles : " + cycles);
   }
-  if (key == 'S'){
+  if (key == 'S') {
     save_lists();
     print("Saved");
   }
-  if(key == 'L'){
+  if (key == 'L') {
     load_lists();
     print("Loaded");
   }
