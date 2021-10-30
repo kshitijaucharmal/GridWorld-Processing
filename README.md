@@ -1,4 +1,4 @@
-# GridWorld
+# GridWorld-Processing
 GridWorld AI
 
 # Setup
